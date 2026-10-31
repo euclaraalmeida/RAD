@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+{% block conteudo %}
+<h2>{% if object %}Editar post{% else %}Criar post{% endif %}</h2>
+<form method="post">
+  {% csrf_token %}
+  {{ form.non_field_errors }}
+  {% for field in form %}<div class="campo">{{ field.label_tag }} {{ field.errors }} {{ field }} {% if field.help_text %}<small>{{ field.help_text }}</small>{% endif %}</div>{% endfor %}
+  <button type="submit">Salvar</button>
+</form>
+<p><a href="{% url 'artigos:lista' %}">Cancelar</a></p>
+{% endblock %}

@@ -1,0 +1,38 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block titulo %}Blog IFPB{% endblock %}</title>
+  <link rel="stylesheet" href="{% static 'artigos/estilo.css' %}">
+</head>
+<body>
+<header>
+  <h1><a href="{% url 'artigos:lista' %}">Blog IFPB</a></h1>
+  <nav aria-label="Principal">
+    <a href="{% url 'artigos:lista' %}">Publicações</a>
+    {% if perms.artigos.add_post %}<a href="{% url 'artigos:novo' %}">Criar post</a>{% endif %}
+    {% if user.is_authenticated %}
+      <a href="{% url 'artigos:meus_posts' %}">Meus posts</a>
+      <span>{{ user.username }}</span>
+      <a href="{% url 'password_change' %}">Trocar senha</a>
+      <form method="post" action="{% url 'logout' %}">{% csrf_token %}<button type="submit">Sair</button></form>
+    {% else %}
+      <a href="{% url 'login' %}">Entrar</a>
+      <a href="{% url 'artigos:cadastro' %}">Cadastrar</a>
+    {% endif %}
+  </nav>
+  <form method="get" action="{% url 'artigos:busca' %}" role="search">
+    <label for="busca-cabecalho">Buscar publicações</label>
+    <input id="busca-cabecalho" type="search" name="q" maxlength="100" value="{{ request.GET.q }}">
+    <button type="submit">Buscar</button>
+  </form>
+</header>
+<main>
+  {% for message in messages %}<p class="mensagem" role="status">{{ message }}</p>{% endfor %}
+  {% block conteudo %}{% endblock %}
+</main>
+<footer><p>IFPB — {% now "Y" %} · Laboratório de RAD</p></footer>
+</body>
+</html>

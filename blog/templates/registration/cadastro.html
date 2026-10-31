@@ -1,0 +1,2 @@
+{% extends 'base.html' %}
+{% block conteudo %}<h2>Criar conta</h2><form method="post">{% csrf_token %}{{ form.as_p }}<button type="submit">Cadastrar</button></form>{% endblock %}

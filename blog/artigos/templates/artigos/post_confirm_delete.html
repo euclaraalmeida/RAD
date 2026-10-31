@@ -1,0 +1,6 @@
+{% extends 'base.html' %}
+{% block conteudo %}
+<h2>Excluir post</h2><p>Confirma a exclusão de “{{ post.titulo }}”?</p>
+<form method="post">{% csrf_token %}<button type="submit">Confirmar exclusão</button></form>
+<p><a href="{% url 'artigos:detalhe' post.slug %}">Cancelar</a></p>
+{% endblock %}

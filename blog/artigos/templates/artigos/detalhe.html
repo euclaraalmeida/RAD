@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% block titulo %}{{ post.titulo }} — {{ block.super }}{% endblock %}
+{% block conteudo %}
+<article>
+  <h2>{{ post.titulo }}</h2>
+  <p class="meta">Por {{ post.autor.username }} · {{ post.publicado_em|date:'d/m/Y H:i' }} · <a href="{% url 'artigos:por_categoria' post.categoria.slug %}">{{ post.categoria.nome }}</a> · {{ post.get_situacao_display }}</p>
+  {{ post.conteudo|linebreaks }}
+  {% if post.tags.exists %}<p>Tags: {% for tag in post.tags.all %}{{ tag.nome }}{% if not forloop.last %}, {% endif %}{% endfor %}</p>{% endif %}
+</article>
+{% if user == post.autor %}
+  {% if perms.artigos.change_post %}<a href="{% url 'artigos:editar' post.slug %}">Editar</a>{% endif %}
+  {% if perms.artigos.delete_post %}<a href="{% url 'artigos:excluir' post.slug %}">Excluir</a>{% endif %}
+{% endif %}
+<p><a href="{% url 'artigos:lista' %}">Voltar às publicações</a></p>
+{% endblock %}

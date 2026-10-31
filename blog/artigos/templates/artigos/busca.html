@@ -1,0 +1,5 @@
+{% extends 'base.html' %}
+{% block conteudo %}
+<h2>Busca</h2><form method="get">{{ form.as_p }}<button type="submit">Buscar</button></form>
+{% for post in posts %}{% include 'artigos/partials/_card_post.html' %}{% empty %}<p>Nenhum resultado encontrado. Digite um termo para buscar.</p>{% endfor %}
+{% endblock %}

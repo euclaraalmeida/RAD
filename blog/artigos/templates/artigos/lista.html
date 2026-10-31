@@ -1,0 +1,8 @@
+{% extends 'base.html' %}
+{% block titulo %}Últimas publicações — {{ block.super }}{% endblock %}
+{% block conteudo %}
+<h2>{% if meus_posts %}Meus posts{% elif categoria %}Categoria: {{ categoria.nome }}{% else %}Últimas publicações{% endif %}</h2>
+{% for post in posts %}
+  {% include 'artigos/partials/_card_post.html' %}
+{% empty %}<p>Nenhum post {% if meus_posts %}criado ainda{% else %}publicado{% if categoria %} nesta categoria{% endif %}{% endif %}.</p>{% endfor %}
+{% endblock %}
