@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+{% block conteudo %}
+<h2>Painel de inscritos — {{ object.nome }}</h2>
+{% for atividade in object.atividades.all %}
+<article class="card"><h3>{{ atividade.titulo }}</h3>
+<p>{{ atividade.inscricoes.count }} inscrito{{ atividade.inscricoes.count|pluralize:'s' }} · {{ atividade.vagas_restantes }} vagas restantes</p>
+<ul>{% for inscricao in atividade.inscricoes.all %}<li>{{ inscricao.inscricao_evento.participante.username }}</li>{% empty %}<li>Nenhum inscrito nesta atividade.</li>{% endfor %}</ul></article>
+{% empty %}<p>Nenhuma atividade cadastrada.</p>{% endfor %}
+<p><a href="{% url 'programacao:detalhe' object.pk %}">Voltar à programação</a></p>
+{% endblock %}

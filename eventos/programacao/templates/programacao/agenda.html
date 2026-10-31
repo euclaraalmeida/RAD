@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% block conteudo %}
+<h2>Minha agenda</h2><p>Atividades de todos os seus eventos, em ordem de data e horário.</p>
+{% for inscricao in inscricoes %}
+<article class="card">
+  <h3>{{ inscricao.atividade.titulo }}</h3>
+  <p><a href="{% url 'programacao:detalhe' inscricao.atividade.evento_id %}">{{ inscricao.atividade.evento.nome }}</a></p>
+  <p>{{ inscricao.atividade.sala }} · {{ inscricao.atividade.inicio|date:'d/m/Y H:i' }} até {{ inscricao.atividade.fim|date:'d/m/Y H:i' }}</p>
+  <form method="post" action="{% url 'programacao:cancelar_atividade' inscricao.pk %}">{% csrf_token %}<button type="submit" class="secundario">Cancelar atividade</button></form>
+</article>
+{% empty %}<p>Você ainda não escolheu atividades.</p>{% endfor %}
+<h2>Minhas inscrições em eventos</h2>
+{% for inscricao in inscricoes_eventos %}
+<article class="card"><h3><a href="{% url 'programacao:detalhe' inscricao.evento_id %}">{{ inscricao.evento.nome }}</a></h3>
+<form method="post" action="{% url 'programacao:cancelar_evento' inscricao.pk %}">{% csrf_token %}<button type="submit" class="perigo">Cancelar evento e suas atividades</button></form></article>
+{% empty %}<p>Você ainda não está inscrito em eventos.</p>{% endfor %}
+{% endblock %}

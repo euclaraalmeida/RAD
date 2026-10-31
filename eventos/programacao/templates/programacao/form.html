@@ -1,0 +1,8 @@
+{% extends 'base.html' %}
+{% block conteudo %}
+<h2>{{ titulo }}</h2><form method="post" class="formulario">
+{% csrf_token %}{{ form.non_field_errors }}
+{% for field in form %}<div class="campo">{{ field.label_tag }}{{ field.errors }}{{ field }}{% if field.help_text %}<small>{{ field.help_text }}</small>{% endif %}</div>{% endfor %}
+<button type="submit">Salvar</button></form>
+<p><a href="{% url 'programacao:lista' %}">Voltar aos eventos</a></p>
+{% endblock %}

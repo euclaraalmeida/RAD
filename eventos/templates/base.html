@@ -1,0 +1,26 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-br">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{% block titulo %}Eventos do campus — IFPB{% endblock %}</title>
+<link rel="stylesheet" href="{% static 'programacao/estilo.css' %}"></head>
+<body>
+<header>
+  <p class="identificacao">IFPB · Rapid Application Development</p>
+  <h1><a href="{% url 'programacao:lista' %}">Eventos do campus</a></h1>
+  <nav aria-label="Principal">
+    <a href="{% url 'programacao:lista' %}">Eventos</a>
+    {% if user.is_authenticated %}
+      <a href="{% url 'programacao:agenda' %}">Minha agenda</a>
+      {% if perms.programacao.add_evento %}<a href="{% url 'programacao:meus_eventos' %}">Meus eventos</a><a href="{% url 'programacao:novo_evento' %}">Criar evento</a>{% endif %}
+      <span>{{ user.username }}</span>
+      <form method="post" action="{% url 'logout' %}">{% csrf_token %}<button type="submit" class="secundario">Sair</button></form>
+    {% else %}<a href="{% url 'login' %}">Entrar</a><a href="{% url 'cadastro' %}">Cadastrar</a>{% endif %}
+  </nav>
+</header>
+<main>
+  {% for message in messages %}<p class="mensagem {{ message.tags }}" role="status">{{ message }}</p>{% endfor %}
+  {% block conteudo %}{% endblock %}
+</main>
+<footer>IFPB · {% now 'Y' %} · Inscrições e programação acadêmica</footer>
+</body></html>

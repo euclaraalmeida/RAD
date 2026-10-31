@@ -1,0 +1,5 @@
+{% extends 'base.html' %}
+{% block conteudo %}
+<h2>Confirmar exclusão</h2><p>Deseja excluir “{{ object }}”? As inscrições vinculadas também serão removidas.</p>
+<form method="post">{% csrf_token %}<button type="submit" class="perigo">Confirmar exclusão</button></form>
+<p><a href="{% url 'programacao:lista' %}">Voltar sem excluir</a></p>{% endblock %}

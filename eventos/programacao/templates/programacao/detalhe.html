@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+{% block titulo %}{{ evento.nome }} — {{ block.super }}{% endblock %}
+{% block conteudo %}
+<h2>{{ evento.nome }}</h2>
+<p class="meta">{{ evento.data_inicio|date:'d/m/Y' }} a {{ evento.data_fim|date:'d/m/Y' }} · Organização: {{ evento.organizador.username }}</p>
+{{ evento.descricao|linebreaks }}
+{% if user == evento.organizador %}
+<div class="acoes">
+  {% if perms.programacao.change_evento %}<a href="{% url 'programacao:editar_evento' evento.pk %}">Editar evento</a>{% endif %}
+  {% if perms.programacao.delete_evento %}<a href="{% url 'programacao:excluir_evento' evento.pk %}">Excluir evento</a>{% endif %}
+  {% if perms.programacao.add_atividade %}<a href="{% url 'programacao:nova_atividade' evento.pk %}">Criar atividade</a>{% endif %}
+  {% if perms.programacao.view_evento %}<a href="{% url 'programacao:painel' evento.pk %}">Painel de inscritos</a>{% endif %}
+</div>
+{% endif %}
+<section class="inscricao">
+{% if inscricao_evento %}
+  <p>Você está inscrito neste evento.</p>
+  <form method="post" action="{% url 'programacao:cancelar_evento' inscricao_evento.pk %}">{% csrf_token %}<button type="submit" class="perigo">Cancelar inscrição no evento e nas atividades</button></form>
+{% elif not evento.inscricoes_abertas %}<p>As inscrições deste evento estão fechadas.</p>
+{% elif user.is_authenticated %}
+  <form method="post" action="{% url 'programacao:inscrever_evento' evento.pk %}">{% csrf_token %}<button type="submit">Inscrever-se no evento</button></form>
+{% else %}<p><a href="{% url 'login' %}?next={{ request.path|urlencode }}">Entre para se inscrever neste evento</a>.</p>{% endif %}
+</section>
+<h2>Programação</h2>
+{% for item in programacao %}{% with atividade=item.atividade %}
+<article class="card">
+  <span class="etiqueta">{{ atividade.get_tipo_display }}</span>
+  <h3>{{ atividade.titulo }}</h3><p>{{ atividade.descricao }}</p>
+  <p>Responsável: {{ atividade.responsavel }}</p>
+  <p class="meta">{{ atividade.sala }} · {{ atividade.inicio|date:'d/m/Y H:i' }} até {{ atividade.fim|date:'d/m/Y H:i' }}</p>
+  <p><strong>{{ item.vagas }} vaga{{ item.vagas|pluralize:'s' }} restante{{ item.vagas|pluralize:'s' }}</strong> de {{ atividade.sala.capacidade }}</p>
+  {% if item.inscricao %}
+    <p>Você está inscrito nesta atividade.</p>
+    <form method="post" action="{% url 'programacao:cancelar_atividade' item.inscricao.pk %}">{% csrf_token %}<button type="submit" class="secundario">Cancelar esta atividade</button></form>
+  {% elif item.pode_inscrever %}
+    <form method="post" action="{% url 'programacao:inscrever_atividade' atividade.pk %}">{% csrf_token %}<button type="submit">Inscrever-se na atividade</button></form>
+  {% elif not item.vagas %}<p>Atividade lotada.</p>
+  {% elif item.conflito %}<p>Este horário conflita com sua agenda.</p>
+  {% elif inscricao_evento and not evento.inscricoes_abertas %}<p>Inscrições encerradas.</p>
+  {% else %}<p>Inscreva-se no evento para escolher suas atividades.</p>{% endif %}
+  {% if user == evento.organizador %}<div class="acoes">
+    {% if perms.programacao.change_atividade %}<a href="{% url 'programacao:editar_atividade' evento.pk atividade.pk %}">Editar atividade</a>{% endif %}
+    {% if perms.programacao.delete_atividade %}<a href="{% url 'programacao:excluir_atividade' evento.pk atividade.pk %}">Excluir atividade</a>{% endif %}
+  </div>{% endif %}
+</article>
+{% endwith %}{% empty %}<p>A programação será divulgada em breve.</p>{% endfor %}
+<p><a href="{% url 'programacao:lista' %}">Voltar aos eventos</a></p>
+{% endblock %}
